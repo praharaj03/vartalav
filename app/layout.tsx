@@ -24,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ClerkProvider
+        proxyUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/__clerk`}
         appearance={{
           layout: {
             socialButtonsVariant: "iconButton",
