@@ -30,6 +30,17 @@ const MeetingCard = ({
 }: MeetingCardProps) => {
   const { toast } = useToast();
 
+  const copyMeetingLink = async () => {
+    try {
+      const absoluteLink = new URL(link, window.location.origin).toString();
+      await navigator.clipboard.writeText(absoluteLink);
+      toast({ title: 'Meeting link copied' });
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Could not copy the meeting link' });
+    }
+  };
+
   return (
     <section className="flex min-h-[258px] w-full flex-col justify-between rounded-[14px] bg-dark-1 px-5 py-8 xl:max-w-[568px]">
       <article className="flex flex-col gap-5">
@@ -67,12 +78,7 @@ const MeetingCard = ({
               &nbsp; {buttonText}
             </Button>
             <Button
-              onClick={() => {
-                navigator.clipboard.writeText(link);
-                toast({
-                  title: "Link Copied",
-                });
-              }}
+              onClick={copyMeetingLink}
               className="bg-dark-4 px-6"
             >
               <Image

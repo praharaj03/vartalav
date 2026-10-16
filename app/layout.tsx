@@ -11,8 +11,26 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "YOOM",
-  description: "Video calling App",
+  title: {
+    default: 'Vaartalav | Video Meetings',
+    template: '%s | Vaartalav',
+  },
+  description:
+    'Start instant video meetings, schedule calls, and join your team from Vaartalav.',
+  applicationName: 'Vaartalav',
+  keywords: ['Vaartalav', 'video meetings', 'online meetings', 'video calls'],
+  openGraph: {
+    title: 'Vaartalav | Video Meetings',
+    description:
+      'Start instant video meetings, schedule calls, and join your team from Vaartalav.',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Vaartalav | Video Meetings',
+    description:
+      'Start instant video meetings, schedule calls, and join your team from Vaartalav.',
+  },
   icons: {
     icon: "/icons/logo.svg",
   },
@@ -24,11 +42,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ClerkProvider
-        proxyUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/__clerk`}
+        proxyUrl={
+          process.env.NEXT_PUBLIC_BASE_URL
+            ? `${process.env.NEXT_PUBLIC_BASE_URL.replace(/\/$/, '')}/__clerk`
+            : undefined
+        }
         appearance={{
           layout: {
             socialButtonsVariant: "iconButton",
-            logoImageUrl: "/icons/yoom-logo.svg",
+            logoImageUrl: '/icons/logo.svg',
           },
           variables: {
             colorText: "#fff",

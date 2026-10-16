@@ -9,6 +9,7 @@ import {
 
 import Alert from './Alert';
 import { Button } from './ui/button';
+import { useToast } from './ui/use-toast';
 
 const MeetingSetup = ({
   setIsSetupComplete,
@@ -33,6 +34,24 @@ const MeetingSetup = ({
 
   // https://getstream.io/video/docs/react/ui-cookbook/replacing-call-controls/
   const [isMicCamToggled, setIsMicCamToggled] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+  const { toast } = useToast();
+
+  const joinMeeting = async () => {
+    if (isJoining) return;
+    setIsJoining(true);
+    try {
+      await call.join();
+      setIsSetupComplete(true);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Could not join the meeting. Check your connection and try again.',
+      });
+    } finally {
+      setIsJoining(false);
+    }
+  };
 
   useEffect(() => {
     if (isMicCamToggled) {
@@ -43,13 +62,6 @@ const MeetingSetup = ({
       call.microphone.enable();
     }
   }, [isMicCamToggled, call.camera, call.microphone]);
-
-  if (callTimeNotArrived)
-    return (
-      <Alert
-        title={`Your Meeting has not started yet. It is scheduled for ${callStartsAt.toLocaleString()}`}
-      />
-    );
 
   if (callHasEnded)
     return (
@@ -62,6 +74,11 @@ const MeetingSetup = ({
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-3 text-white">
       <h1 className="text-center text-2xl font-bold">Setup</h1>
+      {callTimeNotArrived && (
+        <p className="text-center text-sky-1">
+          Scheduled for {callStartsAt.toLocaleString()}. You can join early.
+        </p>
+      )}
       <VideoPreview />
       <div className="flex h-16 items-center justify-center gap-3">
         <label className="flex items-center justify-center gap-2 font-medium">
@@ -75,14 +92,11 @@ const MeetingSetup = ({
         <DeviceSettings />
       </div>
       <Button
+        disabled={isJoining}
         className="rounded-md bg-green-500 px-4 py-2.5"
-        onClick={() => {
-          call.join();
-
-          setIsSetupComplete(true);
-        }}
+        onClick={joinMeeting}
       >
-        Join meeting
+        {isJoining ? 'Joining...' : 'Join meeting'}
       </Button>
     </div>
   );

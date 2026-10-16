@@ -14,9 +14,11 @@ interface HomeCardProps {
 
 const HomeCard = ({ className, img, title, description, handleClick }: HomeCardProps) => {
   return (
-    <section
+    <button
+      type="button"
+      disabled={!handleClick}
       className={cn(
-        'bg-orange-1 px-4 py-6 flex flex-col justify-between w-full xl:max-w-[270px] min-h-[260px] rounded-[14px] cursor-pointer',
+        'bg-orange-1 px-4 py-6 flex flex-col justify-between w-full xl:max-w-[270px] min-h-[260px] rounded-[14px] cursor-pointer text-left text-white disabled:cursor-default',
         className
       )}
       onClick={handleClick}
@@ -29,7 +31,7 @@ const HomeCard = ({ className, img, title, description, handleClick }: HomeCardP
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-lg font-normal">{description}</p>
       </div>
-    </section>
+    </button>
   );
 };
 

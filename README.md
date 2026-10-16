@@ -1,7 +1,7 @@
 <div align="center">
   <br />
     <a href="https://youtu.be/R8CIO1DZ2b8" target="_blank">
-      <img src="https://github.com/adrianhajdin/zoom-clone/assets/67959015/f09a8421-67d3-45ce-b9bc-a791cdc2774b" alt="Project Banner">
+      <img src="https://github.com/adrianhajdin/zoom-clone/assets/67959015/f09a8421-67d3-45ce-b9bc-a791cdc2774b" alt="Vaartalav video meeting app">
     </a>
   
   <br />
@@ -12,7 +12,7 @@
     <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=06B6D4" alt="tailwindcss" />
   </div>
 
-  <h3 align="center">A Zoom Clone</h3>
+  <h3 align="center">Vaartalav — Video Meetings</h3>
 
    <div align="center">
      Build this project step by step with our detailed tutorial on <a href="https://www.youtube.com/@javascriptmastery/videos" target="_blank"><b>JavaScript Mastery</b></a> YouTube. Join the JSM family!
@@ -38,7 +38,7 @@ If you prefer visual learning, this is the perfect resource for you. Follow our 
 
 ## <a name="introduction">🤖 Introduction</a>
 
-Built with the latest Next.js and TypeScript, this project replicates Zoom, a widely used video conferencing tool. It enables users to securely log in, create meetings and access various meeting functionalities such as recording, screen sharing, and managing participants.
+Vaartalav is a video meeting app built with Next.js and TypeScript. Users can sign in, start instant meetings, schedule future calls, join meetings by link or ID, access recordings, and manage participants with Stream's real-time video tools.
 
 If you're getting started and need assistance or face any bugs, join our active Discord community with over 30 thousand members. It's a place where people help each other out.
 
@@ -117,12 +117,13 @@ CLERK_SECRET_KEY=
 
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 NEXT_PUBLIC_STREAM_API_KEY=
 STREAM_SECRET_KEY=
 ```
 
-Replace the placeholder values with your actual Clerk & getstream credentials. You can obtain these credentials by signing up on the [Clerk website](https://clerk.com/) and [getstream website](https://getstream.io/)
+Replace the placeholder values with your actual Clerk & getstream credentials. You can obtain these credentials by signing up on the [Clerk website](https://clerk.com/) and [getstream website](https://getstream.io/). Set `NEXT_PUBLIC_BASE_URL` to your deployed app URL in production; the Clerk proxy is disabled when this variable is unset.
 
 **Running the Project**
 

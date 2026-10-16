@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useRouter } from "next/navigation";
@@ -32,28 +33,53 @@ const PersonalRoom = () => {
   const { user } = useUser();
   const client = useStreamVideoClient();
   const { toast } = useToast();
+  const [origin, setOrigin] = useState('');
 
   const meetingId = user?.id;
 
   const { call } = useGetCallById(meetingId!);
 
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
   const startRoom = async () => {
     if (!client || !user) return;
 
-    const newCall = client.call("default", meetingId!);
+    try {
+      const newCall = client.call("default", meetingId!);
 
-    if (!call) {
-      await newCall.getOrCreate({
-        data: {
-          starts_at: new Date().toISOString(),
-        },
-      });
+      if (!call) {
+        await newCall.getOrCreate({
+          data: {
+            starts_at: new Date().toISOString(),
+            custom: {
+              description: `${user.username || 'Personal'}'s Meeting Room`,
+            },
+          },
+        });
+      }
+
+      router.push(`/meeting/${meetingId}?personal=true`);
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Could not start your personal room. Please try again.' });
     }
-
-    router.push(`/meeting/${meetingId}?personal=true`);
   };
 
-  const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${meetingId}?personal=true`;
+  const meetingLink = meetingId
+    ? `${origin}/meeting/${meetingId}?personal=true`
+    : '';
+
+  const copyInvitation = async () => {
+    try {
+      await navigator.clipboard.writeText(meetingLink);
+      toast({ title: 'Invitation link copied' });
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Could not copy the invitation link' });
+    }
+  };
 
   return (
     <section className="flex size-full flex-col gap-10 text-white">
@@ -64,17 +90,13 @@ const PersonalRoom = () => {
         <Table title="Invite Link" description={meetingLink} />
       </div>
       <div className="flex gap-5">
-        <Button className="bg-blue-1" onClick={startRoom}>
+        <Button className="bg-blue-1" onClick={startRoom} disabled={!client || !user}>
           Start Meeting
         </Button>
         <Button
           className="bg-dark-3"
-          onClick={() => {
-            navigator.clipboard.writeText(meetingLink);
-            toast({
-              title: "Link Copied",
-            });
-          }}
+          onClick={copyInvitation}
+          disabled={!meetingLink}
         >
           Copy Invitation
         </Button>
