@@ -17,7 +17,7 @@ import {
   requestMeetingAdmission,
 } from '@/actions/meeting.actions';
 
-type AdmissionStatus = 'loading' | 'none' | 'waiting' | 'approved' | 'denied' | 'host';
+type AdmissionStatus = 'loading' | 'error' | 'none' | 'waiting' | 'approved' | 'denied' | 'host';
 
 const MeetingSetup = ({
   setIsSetupComplete,
@@ -47,9 +47,8 @@ const MeetingSetup = ({
       return result.status;
     } catch (error) {
       console.error(error);
-      toast({ title: 'Could not check meeting access. Please refresh and try again.' });
-      setStatus('none');
-      return 'none' as const;
+      setStatus('error');
+      return 'error' as const;
     }
   }, [call.id, toast]);
 
@@ -77,7 +76,8 @@ const MeetingSetup = ({
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
-      let currentStatus = status;
+      let currentStatus = status === 'error' ? await refreshAdmission() : status;
+      if (currentStatus === 'error' || currentStatus === 'loading') return;
       if (currentStatus === 'none' || currentStatus === 'denied') {
         const response = await requestMeetingAdmission(call.id);
         currentStatus = response.status;
@@ -165,8 +165,10 @@ const MeetingSetup = ({
             </div>
             <h2 className="text-xl font-semibold">You’re in the right place</h2>
             <p className="mt-2 text-sm leading-6 text-slate-300">
-              Ask to join and the meeting host will let you in. Your preview
-              stays on this device until you enter the call.
+              {status === 'host'
+                ? 'You are hosting this meeting. Join when you are ready; guests will wait for your approval.'
+                : 'Check your camera and microphone, then ask the host to let you in.'}
+              {' '}Your preview stays on this device until you enter the call.
             </p>
           </div>
 
@@ -178,6 +180,12 @@ const MeetingSetup = ({
               <>
                 <Loader2 className="animate-spin text-blue-300" size={19} />
                 <span>Checking your access…</span>
+              </>
+            )}
+            {status === 'error' && (
+              <>
+                <AlertCircle className="text-rose-300" size={19} />
+                <span>Could not reach the meeting service. Retry to check again.</span>
               </>
             )}
             {requestIsPending && (
@@ -223,6 +231,8 @@ const MeetingSetup = ({
                 <Loader2 size={18} className="animate-spin" />
                 Joining…
               </span>
+            ) : status === 'error' ? (
+              'Retry'
             ) : requestIsPending ? (
               'Waiting for host'
             ) : canEnter ? (
