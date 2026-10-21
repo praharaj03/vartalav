@@ -65,7 +65,15 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
     return () => { cancelled = true; };
   }, [type, endedCalls]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return (
+      <Loader
+        fullScreen={false}
+        label={type === 'recordings' ? 'Loading recordings' : 'Loading meetings'}
+        detail="Your meeting list will be ready in a moment."
+      />
+    );
+  }
 
   const calls = getCalls();
   const noCallsMessage = getNoCallsMessage();

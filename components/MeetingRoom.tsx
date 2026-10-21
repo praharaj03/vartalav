@@ -108,7 +108,14 @@ const MeetingRoom = () => {
     }
   };
 
-  if (callingState !== CallingState.JOINED) return <Loader />;
+  if (callingState !== CallingState.JOINED) {
+    return (
+      <Loader
+        label="Joining your meeting"
+        detail="Setting up your audio and video connection."
+      />
+    );
+  }
 
   const callLayout = (() => {
     switch (layout) {

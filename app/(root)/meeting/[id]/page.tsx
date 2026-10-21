@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { StreamCall, StreamTheme } from '@stream-io/video-react-sdk';
 import { useParams } from 'next/navigation';
-import { Loader } from 'lucide-react';
 
 import { useGetCallById } from '@/hooks/useGetCallById';
 import Alert from '@/components/Alert';
+import Loader from '@/components/Loader';
 import MeetingSetup from '@/components/MeetingSetup';
 import MeetingRoom from '@/components/MeetingRoom';
 
@@ -17,7 +17,14 @@ const MeetingPage = () => {
   const { call, isCallLoading } = useGetCallById(id);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
-  if (!isLoaded || isCallLoading) return <Loader />;
+  if (!isLoaded || isCallLoading) {
+    return (
+      <Loader
+        label="Opening your meeting"
+        detail="Checking your sign-in and loading the room."
+      />
+    );
+  }
 
   if (!call) return (
     <p className="text-center text-3xl font-bold text-white">

@@ -73,7 +73,14 @@ const MeetingTypeList = () => {
     }
   };
 
-  if (!client || !user) return <Loader />;
+  if (!client || !user) {
+    return (
+      <Loader
+        label="Connecting to your workspace"
+        detail="Your meetings and controls are loading securely."
+      />
+    );
+  }
 
   const joinMeeting = () => {
     const value = joinLink.trim();
