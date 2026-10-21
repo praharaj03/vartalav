@@ -8,6 +8,112 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(41, 90, 167, 0.17), transparent 36rem),
+    radial-gradient(ellipse at 100% 42%, rgba(91, 44, 164, 0.12), transparent 34rem),
+    #10131d;
+  color: #f8fafc;
+}
+
+::selection {
+  background: rgba(59, 130, 246, 0.45);
+  color: white;
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(96, 165, 250, 0.9);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.lobby-panel {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 1.5rem;
+  background: linear-gradient(145deg, rgba(30, 37, 57, 0.96), rgba(22, 26, 41, 0.94));
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+}
+
+.meeting-lobby {
+  background:
+    radial-gradient(ellipse at 16% 12%, rgba(41, 114, 221, 0.17), transparent 34rem),
+    radial-gradient(ellipse at 88% 86%, rgba(97, 58, 195, 0.14), transparent 30rem),
+    #111521;
+}
+
+.preview-frame {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 18px 54px rgba(0, 0, 0, 0.28);
+}
+
+.admission-status {
+  display: flex;
+  min-height: 3.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.045);
+  padding: 0.9rem 1rem;
+  color: #dbeafe;
+  font-size: 0.875rem;
+}
+
+.admission-status-pending {
+  border-color: rgba(251, 191, 36, 0.22);
+  background: rgba(251, 191, 36, 0.07);
+  color: #fef3c7;
+}
+
+.dashboard-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(112deg, rgba(13, 18, 31, 0.86), rgba(19, 32, 59, 0.64)),
+    url('/images/hero-background.png') center / cover;
+  box-shadow: 0 22px 60px rgba(4, 7, 18, 0.25);
+}
+
+.dashboard-hero::after {
+  position: absolute;
+  z-index: -1;
+  right: -4rem;
+  top: -9rem;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  background: rgba(57, 125, 255, 0.16);
+  content: '';
+  filter: blur(4rem);
+}
+
+.meeting-toolbar {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
 /* ======== stream css overrides ======== */
 .str-video__call-stats {
   max-width: 500px;
@@ -40,6 +146,16 @@
 
 .str-video__call-controls__button {
   height: 40px;
+}
+
+.str-video__call-controls {
+  max-width: calc(100vw - 1.5rem);
+  flex-wrap: wrap;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 1.25rem;
+  background: rgba(19, 24, 37, 0.88);
+  padding: 0.5rem;
+  backdrop-filter: blur(18px);
 }
 
 .glassmorphism {

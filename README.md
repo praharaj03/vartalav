@@ -442,6 +442,20 @@ Public assets used in the project can be found [here](https://drive.google.com/f
 
 Enjoyed creating this project? Dive deeper into our PRO courses for a richer learning experience. They're packed with detailed explanations, cool features, and exercises to boost your skills. Give it a go!
 
+## Meeting entry approval
+
+Meeting and personal-room routes require Clerk authentication. Signed-in guests
+request entry from the pre-join lobby. The request is stored as Stream call
+membership; hosts admit or decline it from the in-call entry requests panel.
+Stream call permissions prevent a regular user from joining before approval.
+
+The server reconciles the Stream `default` call type when it issues a video
+token: regular users lose `join-call` and call-member update permissions, while
+approved `call_member` users retain call access and hosts keep their existing
+capabilities. This changes permissions for every call using the `default` type
+in that Stream application, so use a dedicated Stream application for
+Vaartalav. The server key must be allowed to update call types and call members.
+
 <a href="https://www.jsmastery.pro/ultimate-next-course" target="_blank">
 <img src="https://i.ibb.co/804sPK6/Image-720.png" alt="Project Banner">
 </a>

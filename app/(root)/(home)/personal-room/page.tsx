@@ -5,9 +5,9 @@ import { useUser } from "@clerk/nextjs";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useRouter } from "next/navigation";
 
-import { useGetCallById } from "@/hooks/useGetCallById";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { createPersonalRoom as createPersonalRoomAction } from "@/actions/meeting.actions";
 
 const Table = ({
   title,
@@ -37,8 +37,6 @@ const PersonalRoom = () => {
 
   const meetingId = user?.id;
 
-  const { call } = useGetCallById(meetingId!);
-
   useEffect(() => {
     setOrigin(window.location.origin);
   }, []);
@@ -47,20 +45,8 @@ const PersonalRoom = () => {
     if (!client || !user) return;
 
     try {
-      const newCall = client.call("default", meetingId!);
-
-      if (!call) {
-        await newCall.getOrCreate({
-          data: {
-            starts_at: new Date().toISOString(),
-            custom: {
-              description: `${user.username || 'Personal'}'s Meeting Room`,
-            },
-          },
-        });
-      }
-
-      router.push(`/meeting/${meetingId}?personal=true`);
+      const room = await createPersonalRoomAction();
+      router.push(`/meeting/${room.id}?personal=true`);
     } catch (error) {
       console.error(error);
       toast({ title: 'Could not start your personal room. Please try again.' });

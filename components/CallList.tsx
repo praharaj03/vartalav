@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 
 const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
   const router = useRouter();
-  const { endedCalls, upcomingCalls, callRecordings, isLoading } =
+  const { endedCalls, upcomingCalls, isLoading } =
     useGetCalls();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
 
@@ -41,22 +41,29 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
   };
 
   useEffect(() => {
+    let cancelled = false;
     const fetchRecordings = async () => {
-      const callData = await Promise.all(
-        callRecordings?.map((meeting) => meeting.queryRecordings()) ?? [],
-      );
+      try {
+        const callData = await Promise.allSettled(
+          (endedCalls ?? []).map((meeting) => meeting.queryRecordings()),
+        );
 
-      const recordings = callData
-        .filter((call) => call.recordings.length > 0)
-        .flatMap((call) => call.recordings);
+        const nextRecordings = callData.flatMap((result) =>
+          result.status === 'fulfilled' ? result.value.recordings : [],
+        );
 
-      setRecordings(recordings);
+        if (!cancelled) setRecordings(nextRecordings);
+      } catch (error) {
+        console.error('Could not load meeting recordings', error);
+        if (!cancelled) setRecordings([]);
+      }
     };
 
     if (type === 'recordings') {
       fetchRecordings();
     }
-  }, [type, callRecordings]);
+    return () => { cancelled = true; };
+  }, [type, endedCalls]);
 
   if (isLoading) return <Loader />;
 
@@ -68,7 +75,9 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
       {calls && calls.length > 0 ? (
         calls.map((meeting: Call | CallRecording) => (
           <MeetingCard
-            key={(meeting as Call).id}
+            key={type === 'recordings'
+              ? (meeting as CallRecording).url
+              : (meeting as Call).id}
             icon={
               type === 'ended'
                 ? '/icons/previous.svg'

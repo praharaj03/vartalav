@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 
 import HomeCard from './HomeCard';
 import MeetingModal from './MeetingModal';
-import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk';
+import { useStreamVideoClient } from '@stream-io/video-react-sdk';
 import { useUser } from '@clerk/nextjs';
 import Loader from './Loader';
+import { createMeeting as createMeetingAction } from '@/actions/meeting.actions';
 import { Textarea } from './ui/textarea';
 import ReactDatePicker from 'react-datepicker';
 import { useToast } from './ui/use-toast';
@@ -29,7 +30,11 @@ const MeetingTypeList = () => {
     | undefined
   >(undefined);
   const [values, setValues] = useState(createInitialValues);
-  const [callDetail, setCallDetail] = useState<Call>();
+  const [callDetail, setCallDetail] = useState<{
+    id: string;
+    description: string;
+    startsAt: string;
+  }>();
   const [meetingLink, setMeetingLink] = useState('');
   const [joinLink, setJoinLink] = useState('');
   const [isCreating, setIsCreating] = useState(false);
@@ -46,29 +51,16 @@ const MeetingTypeList = () => {
 
     setIsCreating(true);
     try {
-      const id = crypto.randomUUID();
-      const call = client.call('default', id);
-      const startsAt = isInstantMeeting
-        ? new Date().toISOString()
-        : values.dateTime.toISOString();
-      const description =
-        values.description.trim() ||
-        (isInstantMeeting ? 'Instant Meeting' : 'Scheduled Meeting');
-
-      await call.getOrCreate({
-        data: {
-          starts_at: startsAt,
-          custom: {
-            description,
-          },
-        },
+      const meeting = await createMeetingAction({
+        startsAt: isInstantMeeting ? undefined : values.dateTime.toISOString(),
+        description: values.description,
       });
-      setCallDetail(call);
+      setCallDetail(meeting);
       if (isInstantMeeting) {
-        router.push(`/meeting/${call.id}`);
+        router.push(`/meeting/${meeting.id}`);
       } else {
         setMeetingLink(
-          new URL(`/meeting/${call.id}`, window.location.origin).toString(),
+          new URL(`/meeting/${meeting.id}`, window.location.origin).toString(),
         );
         setMeetingState('meetingCreated');
       }
@@ -219,8 +211,8 @@ const MeetingTypeList = () => {
           buttonText="Copy Meeting Link"
         >
           <p className="text-sky-2">
-            {callDetail.state.custom?.description || 'Scheduled Meeting'} ·{' '}
-            {values.dateTime.toLocaleString()}
+            {callDetail.description} ·{' '}
+            {new Date(callDetail.startsAt).toLocaleString()}
           </p>
           <Input
             aria-label="Meeting link"

@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 
-import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { avatarImages } from "@/constants";
 import { useToast } from "./ui/use-toast";
+import { ArrowUpRight, CalendarDays, Copy } from 'lucide-react';
 
 interface MeetingCardProps {
   title: string;
@@ -42,54 +41,38 @@ const MeetingCard = ({
   };
 
   return (
-    <section className="flex min-h-[258px] w-full flex-col justify-between rounded-[14px] bg-dark-1 px-5 py-8 xl:max-w-[568px]">
+    <section className="group flex min-h-[225px] w-full flex-col justify-between rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.07] to-white/[0.025] p-5 shadow-[0_15px_40px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-300/20 hover:bg-white/[0.07] sm:p-6">
       <article className="flex flex-col gap-5">
-        <Image src={icon} alt="upcoming" width={28} height={28} />
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold">{title}</h1>
-            <p className="text-base font-normal">{date}</p>
+        <div className="flex size-11 items-center justify-center rounded-xl border border-white/10 bg-blue-500/10">
+          <Image src={icon} alt="" width={22} height={22} />
+        </div>
+        <div className="flex justify-between gap-3">
+          <div className="flex min-w-0 flex-col gap-2">
+            <h1 className="line-clamp-2 text-lg font-semibold tracking-tight sm:text-xl">{title}</h1>
+            <p className="flex items-center gap-2 text-sm text-slate-400">
+              <CalendarDays size={15} /> {date}
+            </p>
           </div>
+          <ArrowUpRight size={18} className="shrink-0 text-slate-500 transition group-hover:text-blue-300" />
         </div>
       </article>
-      <article className={cn("flex justify-center relative", {})}>
-        <div className="relative flex w-full max-sm:hidden">
-          {avatarImages.map((img, index) => (
-            <Image
-              key={index}
-              src={img}
-              alt="attendees"
-              width={40}
-              height={40}
-              className={cn("rounded-full", { absolute: index > 0 })}
-              style={{ top: 0, left: index * 28 }}
-            />
-          ))}
-          <div className="flex-center absolute left-[136px] size-10 rounded-full border-[5px] border-dark-3 bg-dark-4">
-            +5
-          </div>
-        </div>
+      <article className="relative mt-7 flex flex-wrap items-center justify-end gap-2">
         {!isPreviousMeeting && (
-          <div className="flex gap-2">
-            <Button onClick={handleClick} className="rounded bg-blue-1 px-6">
+          <>
+            <Button onClick={handleClick} className="h-10 rounded-lg bg-blue-500 px-4 text-white hover:bg-blue-400">
               {buttonIcon1 && (
                 <Image src={buttonIcon1} alt="feature" width={20} height={20} />
               )}
-              &nbsp; {buttonText}
+              {buttonText}
             </Button>
             <Button
               onClick={copyMeetingLink}
-              className="bg-dark-4 px-6"
+              variant="outline"
+              className="h-10 rounded-lg border-white/10 bg-white/[0.04] px-4 text-white hover:bg-white/10 hover:text-white"
             >
-              <Image
-                src="/icons/copy.svg"
-                alt="feature"
-                width={20}
-                height={20}
-              />
-              &nbsp; Copy Link
+              <Copy size={16} /> <span className="ml-2">Copy Link</span>
             </Button>
-          </div>
+          </>
         )}
       </article>
     </section>

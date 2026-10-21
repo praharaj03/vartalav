@@ -15,15 +15,16 @@ const MobileNav = () => {
     <section className="w-full max-w-[264px]">
       <Sheet>
         <SheetTrigger asChild>
-          <Image
-            src="/icons/hamburger.svg"
-            width={36}
-            height={36}
-            alt="hamburger icon"
-            className="cursor-pointer sm:hidden"
-          />
+          <button type="button" className="flex size-10 cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white transition hover:bg-white/10 sm:hidden" aria-label="Open navigation">
+            <Image
+              src="/icons/hamburger.svg"
+              width={20}
+              height={20}
+              alt=""
+            />
+          </button>
         </SheetTrigger>
-        <SheetContent side="left" className="border-none bg-dark-1">
+        <SheetContent side="left" className="border-white/10 bg-[#151a27]">
           <Link href="/" className="flex items-center gap-1">
             <Image
               src="/icons/logo.svg"
@@ -45,9 +46,9 @@ const MobileNav = () => {
                         href={item.route}
                         key={item.label}
                         className={cn(
-                          'flex gap-4 items-center p-4 rounded-lg w-full max-w-60',
+                          'flex w-full max-w-60 items-center gap-4 rounded-xl p-4 text-slate-300 transition-colors hover:bg-white/[0.06] hover:text-white',
                           {
-                            'bg-blue-1': isActive,
+                            'bg-blue-500/15 text-white': isActive,
                           }
                         )}
                       >
