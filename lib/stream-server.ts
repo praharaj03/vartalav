@@ -27,6 +27,7 @@ export const ensureAdmissionPermissions = async () => {
       const { grants } = await video.getCallType({ name: 'default' });
       const userGrants = grants.user ?? [];
       const memberGrants = grants.call_member ?? [];
+      const hostGrants = grants.host ?? [];
       const nextUserGrants = userGrants.filter(
         (permission) =>
           permission !== 'join-call' &&
@@ -36,16 +37,21 @@ export const ensureAdmissionPermissions = async () => {
       const nextMemberGrants = memberGrants.includes('join-call')
         ? memberGrants
         : [...memberGrants, 'join-call'];
+      const nextHostGrants = hostGrants.includes('join-call')
+        ? hostGrants
+        : [...hostGrants, 'join-call'];
 
       if (
         nextUserGrants.length !== userGrants.length ||
-        nextMemberGrants.length !== memberGrants.length
+        nextMemberGrants.length !== memberGrants.length ||
+        nextHostGrants.length !== hostGrants.length
       ) {
         await video.updateCallType('default', {
           grants: {
             ...grants,
             user: nextUserGrants,
             call_member: nextMemberGrants,
+            host: nextHostGrants,
           },
         });
       }

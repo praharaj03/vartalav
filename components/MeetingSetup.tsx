@@ -95,7 +95,11 @@ const MeetingSetup = ({
     } catch (error) {
       console.error(error);
       toast({
-        title: 'Could not join the meeting. Check your connection and try again.',
+        title: 'Could not join the meeting',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'The meeting service rejected the join request. Check the browser console for details.',
       });
     } finally {
       setIsSubmitting(false);
