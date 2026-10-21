@@ -12,7 +12,11 @@ export const getStreamServerClient = () => {
     throw new Error('Stream server credentials are not configured');
   }
 
-  if (!serverClient) serverClient = new StreamClient(apiKey, apiSecret);
+  // The Node SDK defaults to 3 seconds, which is too short for occasional
+  // latency spikes while the Stream API is loading call state or permissions.
+  if (!serverClient) {
+    serverClient = new StreamClient(apiKey, apiSecret, { timeout: 15_000 });
+  }
   return serverClient;
 };
 
