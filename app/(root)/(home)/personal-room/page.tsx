@@ -39,7 +39,7 @@ const PersonalRoom = () => {
   const meetingId = user?.id;
 
   useEffect(() => {
-    setOrigin(getAppBaseUrl(window.location.origin));
+    setOrigin(getAppBaseUrl());
   }, []);
 
   const startRoom = async () => {

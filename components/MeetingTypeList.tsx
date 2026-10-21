@@ -61,7 +61,7 @@ const MeetingTypeList = () => {
         router.push(`/meeting/${meeting.id}`);
       } else {
         setMeetingLink(
-          `${getAppBaseUrl(window.location.origin)}/meeting/${encodeURIComponent(meeting.id)}`,
+          `${getAppBaseUrl()}/meeting/${encodeURIComponent(meeting.id)}`,
         );
         setMeetingState('meetingCreated');
       }

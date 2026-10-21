@@ -53,7 +53,7 @@ const MeetingRoom = () => {
   const callingState = useCallCallingState();
   const meetingLink =
     typeof window !== 'undefined' && call
-      ? `${getAppBaseUrl(window.location.origin)}/meeting/${encodeURIComponent(call.id)}${isPersonalRoom ? '?personal=true' : ''}`
+      ? `${getAppBaseUrl()}/meeting/${encodeURIComponent(call.id)}${isPersonalRoom ? '?personal=true' : ''}`
       : '';
 
   const copyInvite = async (value: string, label: string) => {
