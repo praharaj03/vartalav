@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { createPersonalRoom as createPersonalRoomAction } from "@/actions/meeting.actions";
+import { getAppBaseUrl } from "@/lib/app-url";
 
 const Table = ({
   title,
@@ -38,7 +39,7 @@ const PersonalRoom = () => {
   const meetingId = user?.id;
 
   useEffect(() => {
-    setOrigin(window.location.origin);
+    setOrigin(getAppBaseUrl(window.location.origin));
   }, []);
 
   const startRoom = async () => {

@@ -14,6 +14,7 @@ import { Textarea } from './ui/textarea';
 import ReactDatePicker from 'react-datepicker';
 import { useToast } from './ui/use-toast';
 import { Input } from './ui/input';
+import { getAppBaseUrl } from '@/lib/app-url';
 
 const createInitialValues = () => ({
   dateTime: new Date(Date.now() + 15 * 60 * 1000),
@@ -60,7 +61,7 @@ const MeetingTypeList = () => {
         router.push(`/meeting/${meeting.id}`);
       } else {
         setMeetingLink(
-          new URL(`/meeting/${meeting.id}`, window.location.origin).toString(),
+          `${getAppBaseUrl(window.location.origin)}/meeting/${encodeURIComponent(meeting.id)}`,
         );
         setMeetingState('meetingCreated');
       }

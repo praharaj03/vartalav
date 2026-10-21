@@ -32,15 +32,34 @@ export const ensureAdmissionPermissions = async () => {
       const userGrants = grants.user ?? [];
       const memberGrants = grants.call_member ?? [];
       const hostGrants = grants.host ?? [];
+      // call_member is the admitted-participant role. Keep normal meeting
+      // controls, while reserving moderation and room-wide actions for hosts.
+      const hostOnlyGrants = new Set([
+        'end-call',
+        'update-call',
+        'update-call-settings',
+        'update-call-member',
+        'update-call-permissions',
+        'start-record-call',
+        'stop-record-call',
+        'start-broadcast-call',
+        'stop-broadcast-call',
+        'mute-users',
+        'block-users',
+        'pin-for-everyone',
+        'remove-call-member',
+        'start-transcription-call',
+        'stop-transcription-call',
+      ]);
       const nextUserGrants = userGrants.filter(
-        (permission) =>
-          permission !== 'join-call' &&
-          permission !== 'update-call-member' &&
-          permission !== 'update-call-permissions',
+        (permission) => permission !== 'join-call' && !hostOnlyGrants.has(permission),
       );
-      const nextMemberGrants = memberGrants.includes('join-call')
-        ? memberGrants
-        : [...memberGrants, 'join-call'];
+      const nextMemberGrants = [
+        ...memberGrants.filter((permission) => !hostOnlyGrants.has(permission)),
+      ];
+      if (!nextMemberGrants.includes('join-call')) {
+        nextMemberGrants.push('join-call');
+      }
       const nextHostGrants = hostGrants.includes('join-call')
         ? hostGrants
         : [...hostGrants, 'join-call'];

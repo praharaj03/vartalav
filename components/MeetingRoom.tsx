@@ -28,6 +28,7 @@ import { Input } from './ui/input';
 import { useToast } from './ui/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { getMeetingAdmission, decideMeetingAdmission } from '@/actions/meeting.actions';
+import { getAppBaseUrl } from '@/lib/app-url';
 
 type WaitingParticipant = { id: string; name: string };
 
@@ -52,7 +53,7 @@ const MeetingRoom = () => {
   const callingState = useCallCallingState();
   const meetingLink =
     typeof window !== 'undefined' && call
-      ? `${window.location.origin}/meeting/${encodeURIComponent(call.id)}${isPersonalRoom ? '?personal=true' : ''}`
+      ? `${getAppBaseUrl(window.location.origin)}/meeting/${encodeURIComponent(call.id)}${isPersonalRoom ? '?personal=true' : ''}`
       : '';
 
   const copyInvite = async (value: string, label: string) => {
@@ -296,7 +297,7 @@ const MeetingRoom = () => {
             <Users size={20} className="text-white" />
           </div>
         </button>
-        {!isPersonalRoom && <EndCallButton />}
+        {isHost && !isPersonalRoom && <EndCallButton />}
       </div>
     </section>
   );
