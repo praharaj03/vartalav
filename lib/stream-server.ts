@@ -28,7 +28,7 @@ export const ensureAdmissionPermissions = async () => {
   if (!admissionPermissionsReady) {
     admissionPermissionsReady = (async () => {
       const video = getStreamServerClient().video;
-      const { grants } = await video.getCallType({ name: 'default' });
+      const { grants, settings } = await video.getCallType({ name: 'default' });
       const userGrants = grants.user ?? [];
       const memberGrants = grants.call_member ?? [];
       const hostGrants = grants.host ?? [];
@@ -52,10 +52,18 @@ export const ensureAdmissionPermissions = async () => {
         'stop-transcription-call',
       ]);
       const nextUserGrants = userGrants.filter(
-        (permission) => permission !== 'join-call' && !hostOnlyGrants.has(permission),
+        (permission) =>
+          permission !== 'join-call' &&
+          permission !== 'send-custom-events' &&
+          !hostOnlyGrants.has(permission),
       );
       const nextMemberGrants = [
-        ...memberGrants.filter((permission) => !hostOnlyGrants.has(permission)),
+        ...memberGrants.filter(
+          (permission) =>
+            !hostOnlyGrants.has(permission) &&
+            permission !== 'screenshare' &&
+            permission !== 'send-custom-events',
+        ),
       ];
       if (!nextMemberGrants.includes('join-call')) {
         nextMemberGrants.push('join-call');
@@ -63,13 +71,22 @@ export const ensureAdmissionPermissions = async () => {
       const nextHostGrants = hostGrants.includes('join-call')
         ? hostGrants
         : [...hostGrants, 'join-call'];
+      const screenSharingSettings = settings?.screensharing;
 
       if (
         nextUserGrants.length !== userGrants.length ||
         nextMemberGrants.length !== memberGrants.length ||
-        nextHostGrants.length !== hostGrants.length
+        nextHostGrants.length !== hostGrants.length ||
+        !screenSharingSettings?.enabled ||
+        !screenSharingSettings.access_request_enabled
       ) {
         await video.updateCallType('default', {
+          settings: {
+            screensharing: {
+              enabled: true,
+              access_request_enabled: true,
+            },
+          },
           grants: {
             ...grants,
             user: nextUserGrants,

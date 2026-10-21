@@ -222,3 +222,47 @@ export async function decideMeetingAdmission(
   });
   return { status: approve ? 'approved' : 'denied' };
 }
+
+export async function setMeetingChatEnabled(id: string, enabled: boolean) {
+  const user = await getAuthenticatedUser();
+  const { call, meeting } = await loadMeetingMembers(id);
+  if (meeting.call.created_by.id !== user.id) {
+    throw new Error('Only the meeting host can change chat settings.');
+  }
+
+  await call.update({
+    custom: { ...meeting.call.custom, chat_enabled: enabled },
+  });
+  return { enabled };
+}
+
+export async function sendMeetingChatMessage(id: string, input: string, messageId: string) {
+  const user = await getAuthenticatedUser();
+  const { call, meeting, members } = await loadMeetingMembers(id);
+  if ((meeting.call.custom as Record<string, unknown> | undefined)?.chat_enabled !== true) {
+    throw new Error('The host has disabled meeting chat.');
+  }
+
+  const member = members.find((item) => item.user_id === user.id);
+  const isMeetingHost = meeting.call.created_by.id === user.id;
+  if (!isMeetingHost && member?.role !== 'call_member') {
+    throw new Error('Only admitted participants can use meeting chat.');
+  }
+
+  const text = input.trim();
+  if (!text || text.length > 1000) {
+    throw new Error('Messages must contain between 1 and 1000 characters.');
+  }
+  if (!/^[a-zA-Z0-9_-]{1,80}$/.test(messageId)) {
+    throw new Error('Invalid chat message identifier.');
+  }
+
+  await call.sendCustomEvent({
+    kind: 'vaartalav-chat-message',
+    message_id: messageId,
+    sender_id: user.id,
+    sender_name: user.username || user.fullName || user.id,
+    text,
+  });
+  return { messageId };
+}
